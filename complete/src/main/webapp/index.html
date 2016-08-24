@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Awesome CarParts</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="css/justified-nav.css" rel="stylesheet">
+
+    <link href="css/bootstrap-treeview.min.css" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Awesome Carparts</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <form class="navbar-form navbar-right">
+                <div class="form-group">
+                    <input type="text" placeholder="AZ 49 123" id="regNr" class="form-control">
+                </div>
+                <button class="btn btn-default" id="lookupRegNr">Slå op med nummerplade &raquo;</button>
+            </form>
+        </div><!--/.navbar-collapse -->
+    </div>
+</nav>
+
+<!-- Main jumbotron for a primary marketing message or call to action -->
+<div class="jumbotron">
+    <div class="container">
+        <h1>Awesome Carparts!</h1>
+        <p>This is a template for a simple marketing or informational website. It includes a large callout ...</p>
+        <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a></p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <div id="catalog"></div>
+            <div id="main">
+                <h3>Markedsføring</h3>
+                <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+            </div>
+        </div>
+        <div class="col-md-4" id="basket">
+            <h3>Markedsføring</h3>
+            <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <hr>
+
+    <footer>
+        <p>&copy; 2016 Company, Inc.</p>
+    </footer>
+</div> <!-- /container -->
+
+<script id="single-part-template" type="text/x-handlebars-template">
+    <div class="row">
+        <div class="col-md-6">
+            <h2>{{name}}</h2>
+            <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh.</p>
+            <p>{{description}}</p>
+            <p>
+                {{~#if name}}
+                    <button class="btn btn-default goCatalog">&laquo; Tilbage</button>
+                    <button class="btn btn-success addToBasket" data-part-id="{{partId}}">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Tilføj til kurv
+                    </button>
+                {{~^~}}
+                    <button class="btn btn-warning goCatalog">&laquo; Udsolgt</button>
+                {{~/if~}}
+            </p>
+        </div>
+    </div>
+</script>
+
+<script id="basket-template" type="text/x-handlebars-template">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Kurv</h3>
+        </div>
+        <ul class="list-group">
+            {{#items}}
+            <li class="list-group-item removeItem" data-idx="{{idx}}">
+                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> {{item}}
+            </li>
+            {{/items}}
+
+            {{~#if checkout}}
+            <li class='list-group-item'><button class="btn btn-success" onclick="alert('Tillykke med købet!')">Check ud</button></li>
+            {{~^~}}
+            <li class='list-group-item'>Kurven er tom</li>
+            {{~/if~}}
+        </ul>
+    </div>
+</script>
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="lib/jquery-3.1.0.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="lib/bootstrap.min.js"></script>
+<script src="lib/handlebars.min-4.0.5.js"></script>
+<script src="lib/bootstrap-treeview.min.js"></script>
+
+<script type="text/javascript">
+
+$(function() {
+  var singlePart = Handlebars.compile($('#single-part-template').html());
+  var basketTemplate = Handlebars.compile($('#basket-template').html());
+
+  var basket = [];
+
+  function renderBasket() {
+      $('#basket').html(basketTemplate( {
+        checkout: basket.length > 0,
+        items: basket.map(function(e, i) {
+            return {item: e, idx: i}
+        })
+      }));
+
+      $('.removeItem').click(function() {
+        var i = $(this).data('idx');
+        basket.splice(i, 1);
+        renderBasket();
+      });
+   }
+
+  function renderSinglePart(partId) {
+      $.getJSON( "/part?partId=" + partId, function( data ) {
+        $('#catalog').hide();
+        $('#main').show();
+
+        $('#main').html(singlePart(data));
+
+        $('.goCatalog').click(renderCatalog);
+
+        $('.addToBasket').click(function() {
+          var partId = $(this).data('part-id');
+          basket.push(partId);
+          renderBasket();
+        });
+      });
+  }
+
+  function renderCatalog(type) {
+     $('#main').hide();
+     $('#catalog').show();
+  }
+
+  $('#lookupRegNr').click(function() {
+    $.ajax({
+        type: 'POST',
+        url:  '/getCatalog',
+        data: 'regNr=' + $('#regNr').val(),
+        success: function(data) {
+            $('#catalog').treeview({ data: data, levels: 1 })
+            .on('nodeSelected', function(event, data) {
+                console.log(data);
+                if(data.partId) {
+                    renderSinglePart(data.partId);
+                }
+            });
+
+            renderCatalog();
+        },
+        error: function(jqXHR, textStatus, errorThrown ) {
+            console.log(jqXHR);
+        }
+    });
+    return false;
+  });
+});
+
+</script>
+</body>
+</html>

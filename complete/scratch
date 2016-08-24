@@ -1,0 +1,10 @@
+
+        JsonNodeFactory.instance.objectNode();
+
+        String type = rest.postForObject("http://localhost:8080/regnr?regNr=" + regNr, null, String.class);
+
+        JsonNode node = rest.getForObject("http://localhost:8080/catalog?type=" + type, JsonNode.class);
+
+        ObjectNode objectNode = JsonNodeFactory.instance.objectNode();
+
+        objectNode.replace("testing", node);

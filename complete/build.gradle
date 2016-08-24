@@ -19,11 +19,15 @@ apply plugin: 'docker'
 // end::plugin[]
 
 // This is used as the docker image prefix (org)
-group = 'gregturn'
+group = 'lsz'
 
 jar {
     baseName = 'gs-spring-boot-docker'
     version =  '0.1.0'
+
+    from('src/main') {
+        include('webapp/**')
+    }
 }
 
 // tag::task[]
@@ -48,7 +52,9 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter-web") 
+    compile 'io.reactivex:rxjava:1.1.9'
+
+    compile("org.springframework.boot:spring-boot-starter-web")
     testCompile("org.springframework.boot:spring-boot-starter-test")
 }
 

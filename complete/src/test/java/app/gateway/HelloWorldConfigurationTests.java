@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package hello;
-
-import java.util.Map;
+package app.gateway;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,12 +30,12 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Basic integration tests for service demo application.
+ * Basic integration tests for app.service demo application.
  *
  * @author Dave Syer
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = Application.class)
+@SpringApplicationConfiguration(classes = Gateway.class)
 @WebAppConfiguration
 @IntegrationTest("server.port=0")
 @DirtiesContext
