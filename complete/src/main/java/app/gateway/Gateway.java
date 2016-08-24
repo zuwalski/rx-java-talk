@@ -22,19 +22,20 @@ public class Gateway {
     @RequestMapping(path = "/getCatalog", method = RequestMethod.POST)
     public JsonNode catalog(@RequestParam String regNr) {
 
-        Observable<String> dmr = Observable.fromCallable(() ->
-                rest.postForObject("http://localhost:8080/dmr?regNr=" + regNr, null, String.class)
-        )
-                .doOnNext(log::info)
-                .timeout(1, TimeUnit.SECONDS)
-                .doOnError(e -> log.warn("error " + e.getClass().getSimpleName()))
-                .onErrorReturn(e -> "");
+        Observable<JsonNode> catalog = Observable.amb(
+                Observable.fromCallable(() ->
+                        rest.postForObject("http://localhost:8080/dmr?regNr=" + regNr, null, String.class)
+                ).subscribeOn(Schedulers.io()),
 
-        Observable<JsonNode> catalog = dmr.map(
-                type -> rest.getForObject("http://localhost:8080/catalog?type=" + type, JsonNode.class)
+                Observable.fromCallable(() ->
+                        rest.postForObject("http://localhost:8080/dmrCache?regNr=" + regNr, null, String.class)
+                ).subscribeOn(Schedulers.io())
         )
-                //.subscribeOn(Schedulers.io())
-        ;
+                .timeout(2, TimeUnit.SECONDS)
+                .onErrorReturn(e -> "UNKNOWN")
+                .map(
+                        type -> rest.getForObject("http://localhost:8080/catalog?type=" + type, JsonNode.class)
+                );
 
         return catalog.toBlocking().first();
     }

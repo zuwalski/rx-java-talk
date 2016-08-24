@@ -1,5 +1,7 @@
 package app.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,6 +12,7 @@ import java.util.List;
 
 @RestController
 public class SparePartCatalog {
+    private final Logger log = LoggerFactory.getLogger(SparePartCatalog.class);
 
     public static class CatalogItem {
         public String text;
@@ -42,6 +45,8 @@ public class SparePartCatalog {
 
     @RequestMapping(path = "/catalog")
     public List<CatalogItem> catalog(@RequestParam String type) {
+        log.info("catalog for " + type);
+
         return cat("root",
                 cat("Aircondition",
                         cat("Aircon pumper").add("pumpe til " + type, "p1")
