@@ -35,7 +35,7 @@ import static org.junit.Assert.assertEquals;
  * @author Dave Syer
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = Gateway.class)
+@SpringApplicationConfiguration(classes = CatalogGateway.class)
 @WebAppConfiguration
 @IntegrationTest("server.port=0")
 @DirtiesContext

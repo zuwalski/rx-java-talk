@@ -74,13 +74,13 @@
 <script id="single-part-template" type="text/x-handlebars-template">
     <div class="row">
         <div class="col-md-6">
-            <h2>{{name}}</h2>
+            <h2>{{part.name}}</h2>
             <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh.</p>
-            <p>{{description}}</p>
+            <p>{{part.description}}</p>
             <p>
-                {{~#if name}}
+                {{~#if available}}
                     <button class="btn btn-default goCatalog">&laquo; Tilbage</button>
-                    <button class="btn btn-success addToBasket" data-part-id="{{partId}}">
+                    <button class="btn btn-success addToBasket" data-part-id="{{part.partId}}">
                         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Tilføj til kurv
                     </button>
                 {{~^~}}
@@ -88,6 +88,20 @@
                 {{~/if~}}
             </p>
         </div>
+        <div class="col-md-2">
+            {{~#if available}}
+                <h2 class="nowrap">kr. {{price}}</h2>
+                <p class="nowrap">Kun {{stock.inStock}} på lager!</p>
+            {{~/if~}}
+        </div>
+    </div>
+    <div class="row">
+        {{#items}}
+            <div class="col-md-4">
+                <h4>{{header}}</h4>
+                <p>{{details}}</p>
+            </div>
+        {{/items}}
     </div>
 </script>
 
@@ -143,7 +157,7 @@ $(function() {
    }
 
   function renderSinglePart(partId) {
-      $.getJSON( "/part?partId=" + partId, function( data ) {
+      $.getJSON( "/getDetails?partId=" + partId, function( data ) {
         $('#catalog').hide();
         $('#main').show();
 
