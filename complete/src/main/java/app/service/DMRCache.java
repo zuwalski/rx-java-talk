@@ -5,16 +5,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Random;
-
 @RestController
-public class DMR {
+public class DMRCache {
 
-    Random rnd = new Random();
-
-    @RequestMapping(path = "/dmr", method = RequestMethod.POST)
-    public String dmr(@RequestParam String regNr) throws InterruptedException {
-        Thread.sleep(rnd.nextInt(5000) + 5000);
+    @RequestMapping(path = "/dmrCache", method = RequestMethod.POST)
+    public String dmr(@RequestParam String regNr) {
         return regNr;
     }
 }

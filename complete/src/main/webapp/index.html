@@ -165,6 +165,7 @@ $(function() {
   }
 
   $('#lookupRegNr').click(function() {
+    $('#catalog').hide();
     $.ajax({
         type: 'POST',
         url:  '/getCatalog',
