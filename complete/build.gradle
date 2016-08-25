@@ -54,6 +54,8 @@ targetCompatibility = 1.8
 dependencies {
     compile 'io.reactivex:rxjava:1.1.9'
 
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'
+
     compile("org.springframework.boot:spring-boot-starter-web")
     testCompile("org.springframework.boot:spring-boot-starter-test")
 }
